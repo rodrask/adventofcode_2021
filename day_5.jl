@@ -1,5 +1,3 @@
-using DelimitedFiles
-
 struct Point
     x::Int
     y::Int
@@ -10,28 +8,23 @@ struct Line
 end
 
 function parseLine(l::String)
-    s,f = split(l," -> ")
-    s_x, s_y = split(s,",") .|> d -> parse(Int, d)
-    f_x, f_y = split(f,",") .|> d -> parse(Int, d)
-    Line(Point(s_x, s_y), Point(f_x, f_y))
+    s,f = split(l, " -> ")
+    s_x, s_y = split(s, ",") .|> d -> parse(Int, d)
+    f_x, f_y = split(f, ",") .|> d -> parse(Int, d)
+    Line(Point(s_x+1, s_y+1), Point(f_x+1, f_y+1))
 end
 
 isStraightLine(line::Line) = line.start.x == line.finish.x || line.start.y == line.finish.y
-function fieldSize(lines::AbstractVector{Line})
-    max_x = maximum(l->max(l.start.x, l.finish.x), lines)
-    max_y = maximum(l->max(l.start.y, l.finish.y), lines)
-    (max_x+1 ,max_y+1)
-end
+fieldSize(lines::AbstractVector{Line}) = 
+    ( 
+        maximum(l->max(l.start.x, l.finish.x), lines),
+        maximum(l->max(l.start.y, l.finish.y), lines)
+    )
 
-safeRange(x1::Int,x2::Int) = ifelse(x1 <= x2, (x1+1):(x2+1), (x1+1):-1:(x2+1))
+safeRange(x1::Int,x2::Int) = ifelse(x1 <= x2, x1:x2, x1:-1:x2)
 lineIndices(l::Line) = CartesianIndex.(safeRange(l.start.x, l.finish.x), safeRange(l.start.y, l.finish.y))
 
-function fill!(field::AbstractMatrix, line::Line)
-    for ci in lineIndices(line)
-        field[ci] += 1
-    end
-end
-
+fill!(field::AbstractMatrix, line::Line) = foreach(ci -> field[ci] += 1, lineIndices(line))
 countOvelaps(field::AbstractMatrix) = count(v -> v>1, field)
 
 function main1()
