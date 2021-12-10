@@ -21,7 +21,7 @@ fieldSize(lines::AbstractVector{Line}) =
         maximum(l->max(l.start.y, l.finish.y), lines)
     )
 
-safeRange(x1::Int,x2::Int) = ifelse(x1 <= x2, x1:x2, x1:-1:x2)
+safeRange(x1::Int,x2::Int) = ix1 <= x2 ? (x1:x2) : (x1:-1:x2)
 lineIndices(l::Line) = CartesianIndex.(safeRange(l.start.x, l.finish.x), safeRange(l.start.y, l.finish.y))
 
 fill!(field::AbstractMatrix, line::Line) = foreach(ci -> field[ci] += 1, lineIndices(line))

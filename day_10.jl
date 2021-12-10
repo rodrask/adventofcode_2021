@@ -17,7 +17,7 @@ function parseBracketLine(line::String)
 			end
 		end
 	end
-	ifelse(isempty(stack), (0,0), (0, autocompleteScore(stack)))
+	isempty(stack) ? (0,0) : (0, autocompleteScore(stack))
 end
 
 autocompleteScore(openstack::Vector{Char}) = 

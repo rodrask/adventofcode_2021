@@ -39,8 +39,8 @@ function find6(n_069, n_1)
 	n_069[:, idx_6], @view n_069[:, 1:end .!= idx_6]
 end
 
-select_09(n_09, n_3) = ifelse(n_09[:, 1] .* n_3 != n_3, n_09, @view n_09[:, [2,1]])
-select_25(n_25, n_6) = ifelse(sum(n_25[:, 1] .* n_6) == 4, n_25, @view n_25[:, [2,1]])
+select_09(n_09, n_3) =    (n_09[:, 1] .* n_3 != n_3)  ? n_09 : @view n_09[:, [2,1]]
+select_25(n_25, n_6) = (sum(n_25[:, 1] .* n_6) == 4) ? n_25 : @view n_25[:, [2,1]]
 
 function solve(digits::AbstractMatrix{Bool})
 	result = zeros(Bool, size(digits))
