@@ -30,7 +30,6 @@ function main1()
     octomap = readMap("day_11.txt")
     myneighbours = neighboursFunction(octomap)
     total = 0
-    foldl((octomap, nflashes), 1:100)
     for _ in 1:100
         octomap, nflashes = step(octomap, myneighbours)
         total += nflashes
