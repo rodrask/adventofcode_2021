@@ -1,5 +1,5 @@
 Vertex = AbstractString
-isbig(v::Vertex) = v |> collect .|> isuppercase |> any
+isbig(v::Vertex) = isuppercase(v[1])
 
 isstart(v::Vertex) = v=="start"
 isend(v::Vertex) = v=="end"
@@ -50,16 +50,15 @@ function unrollPath(endPoint::PathPoint)
 end
 
 function countPaths(g::Graph, testFunction::Function)
-    frontPoints = PathPoint[]
     nPaths = 0
-    push!(frontPoints, PathPoint("start"))
+    frontPoints = PathPoint[PathPoint("start")]
     while !isempty(frontPoints)
         currentPoint = pop!(frontPoints)
         for adjVertex in neighbours(g, currentPoint.v)
             if isend(adjVertex)
                 nPaths += 1
             elseif testFunction(adjVertex, currentPoint)
-                pushfirst!(frontPoints, PathPoint(currentPoint, adjVertex))
+                push!(frontPoints, PathPoint(currentPoint, adjVertex))
             end
         end
     end
@@ -73,7 +72,7 @@ function main1()
 end
 
 function main2()
-    testFunction(adjVertex::Vertex, currentPoint::PathPoint) =  isbig(adjVertex) || !currentPoint.doubleVisit || adjVertex ∉ currentPoint.visited
+    testFunction(adjVertex::Vertex, currentPoint::PathPoint) =  !currentPoint.doubleVisit || isbig(adjVertex) || adjVertex ∉ currentPoint.visited
     graph = Graph("day_12.txt")
     countPaths(graph, testFunction)
 end
