@@ -34,16 +34,13 @@ level(node::Node) = isroot(node) ? 0 : 1+level(node.parent)
 function Base.:+(left::Pair, right::Pair)
     root = Pair(nothing)
     
-    root.left = left
-    left.parent = root
+    root.left = deepcopy(left) 
+    root.left.parent = root
     
-    root.right = right
-    right.parent = root
+    root.right = deepcopy(right)
+    root.right.parent = root
     root
 end
-
-pairtraverse(pair::Pair) = isterminal(pair) ? [pair] : [traverse(pair.left);traverse(pair.right)]
-leaftraverse(pair::Pair) = isterminal(pair) ? [pair.left, pair.right] : [traverse(pair.left);traverse(pair.right)]
 
 function updatesibling!(sibling::Union{Leaf, Nothing}, inc::Int)
     if !isnothing(sibling)
@@ -95,6 +92,11 @@ function split!(leaf::Leaf)
     updateparent!(leaf.parent, leaf, nextleaf)
 end
 
+pairtraverse(pair::Pair) = isterminal(pair) ? [pair] : [pairtraverse(pair.left);pairtraverse(pair.right)]
+pairtraverse(leaf::Leaf) = []
+leaftraverse(pair::Pair) = isterminal(pair) ? [pair.left, pair.right] : [leaftraverse(pair.left);leaftraverse(pair.right)]
+leaftraverse(leaf::Leaf) = [leaf]
+
 function explodereduce!(root::Node)
     for pair in pairtraverse(root)
         if needexplode(pair)
@@ -124,5 +126,12 @@ end
 function main1()
     numbers = readlines("day_18.txt") .|> Meta.parse .|> eval .|> build
     result = foldl((f,r) -> fullreduce!(f+r), numbers[2:end];init=numbers[1])
+    show(result) |> println
     magnitude(result)
+end
+
+function main2()
+    numbers = readlines("day_18.txt") .|> Meta.parse .|> eval .|> build
+    apply(n1,n2) = magnitude(fullreduce!(n1 + n2))
+    maximum(apply(x,y) for (x,y) in Iterators.product(numbers, numbers) if x!= y)
 end
