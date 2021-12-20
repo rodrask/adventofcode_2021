@@ -27,5 +27,5 @@ function safeNeighbours8(m::AbstractMatrix)
 	myneighbours(idx::CartesianIndex{2}) = [i for i in max(f, idx-f):min(l, idx+f) if i != idx]
 end
 
-
+increment!(counter::Dict{T, Int}, key::T, value::Int=1) where T = counter[key] = value + get(counter, key, 0)
 	

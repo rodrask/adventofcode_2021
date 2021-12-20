@@ -1,3 +1,5 @@
+include("common.jl")
+
 productregex = r"(?<f1>[A-Z]{1})(?<f2>[A-Z]{1}) -> (?<t>[A-Z]{1})"
 
 function parseline(line::AbstractString)
@@ -6,8 +8,6 @@ function parseline(line::AbstractString)
 end
 
 loadProductionRules(io::IOStream) = eachline(io) .|> parseline |> Dict
-
-increment!(counter::Dict{T, Int}, key::T, value::Int=1) where T = counter[key] = value + get(counter, key, 0)
 
 function applyRulesAndScore(template::AbstractVector{Char}, rules::Dict{Tuple{Char,Char}, Char}, steps::Int)
     paircounter = Dict{Tuple{Char, Char}, Int}()
