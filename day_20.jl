@@ -34,7 +34,7 @@ function enhancestep(ieavector::BitVector, img::BitMatrix, valueoninf::Bool=fals
 	for idx in CartesianIndices(result)
 		ieaidx = 0
 		for (o, nidx) in zip(traverseorder, idx-step:idx+step)
-			imgvalue = (1 <= nidx.I[1] <= n_rows) && (1 <= nidx.I[2] <= n_rows) ? img[nidx] : valueoninf
+			imgvalue = (1 <= nidx.I[1] <= n_rows) && (1 <= nidx.I[2] <= n_cols) ? img[nidx] : valueoninf
 			ieaidx += imgvalue << (9-o)
 		end
 		result[idx] = ieavector[ieaidx+1]
