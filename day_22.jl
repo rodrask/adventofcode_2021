@@ -10,7 +10,7 @@ function parseLine(line::String)
 	CartesianIndices((xrange, yrange, zrange)), m[:on] == "on"
 end
 
-function toggleintersection!(area::CartesianIndices, dict::Dict{CartesianIndices, Int}, pair::Pair{CartesianIndices, Int})
+function toggleintersection!(dict::Dict{CartesianIndices, Int}, area::CartesianIndices, pair::Pair{CartesianIndices, Int})
 	prevcube, value = pair
 	intersection = area ∩ prevcube
 	if length(intersection) > 0 
@@ -21,15 +21,17 @@ end
 
 function countcubes(input::Vector{Tuple{CartesianIndices{3,Tuple{UnitRange{Int64}, UnitRange{Int64}, UnitRange{Int64}}}, Bool}})
 	cubecounter = Dict{CartesianIndices, Int}()
+	currentcounter = Dict{CartesianIndices, Int}()
 	step = 1
 	for (area, value) in input
-		currentcounter = Dict{CartesianIndices, Int}()
-		foreach(p->toggleintersection!(area, currentcounter, p), pairs(cubecounter))
+		empty!(currentcounter)
+		toggleintersection!.((currentcounter,), (area,), collect(pairs(cubecounter)))
 		if value
 			cubecounter[area] = 1
 		end
 		mergewith!(+, cubecounter, currentcounter)
-		delete!.((cubecounter,), [k for (k,v) in pairs(cubecounter) if v == 0])
+		delete!.((cubecounter,), k for (k,v) in pairs(cubecounter) if v == 0)
+		# println("step ",step," size ",length(cubecounter))
 		step += 1
 	end
 	sum((length(c)*v for (c, v) in pairs(cubecounter)))
@@ -48,3 +50,5 @@ function main2()
 	println(countcubes(input))
 end
 
+main1()
+main2()
